@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+    <!-- HandlerMapping -->
+    <!--<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>-->
+    <!--表示将请求的URL和Bean名字映射，
+    如URL为 “上下文/hello”，则Spring配置文件必须有一个名字为“/hello”的Bean，上下文默认忽略。-->
+
+    <!-- HandlerAdapter -->
+    <!--若只有这个 而没有上边的 会出现下面错误-->
+    <!--The DispatcherServlet configuration needs to include a HandlerAdapter that supports this handler-->
+    <!--<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>-->
+    <!--表示所有实现了org.springframework.web.servlet.mvc.Controller接口的Bean可以作为Spring Web MVC中的处理器。
+    如果需要其他类型的处理器可以通过实现HadlerAdapter来解决。-->
+
+    <!--使用注解模式-->
+    <context:component-scan base-package="com.ckh.controller"/>
+
+    <!--ViewResolver-->
+    <!--InternalResourceViewResolver：用于支持Servlet、JSP视图解析；-->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- viewClass：JstlView表示JSP模板页面需要使用JSTL标签库，classpath中必须包含jstl的相关jar包；-->
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <!--prefix和suffix：查找视图页面的前缀和后缀（前缀[逻辑视图名]后缀），
+        比如传进来的逻辑视图名为hello，若prefix的value="/WEB-INF/jsp/则该该jsp视图页面应该存放在“WEB-INF/jsp/hello.jsp”-->
+        <property name="prefix" value="/"/>
+        <property name="suffix" value=".jsp"/>
+        <!--其作用是把视图约定在 /*.jsp 这个位置-->
+    </bean>
+
+    <!--处理器-->
+    <!--name="/hello"：前边配置的BeanNameUrlHandlerMapping，表示如过请求的URL为 “上下文/hello”，则将会交给该Bean进行处理。 -->
+    <bean name="/hello" class="com.ckh.controller.HelloWorldController"/>
+    <!--<bean name="/addProduct" class="com.ckh.controller.ProductController"/>-->
+
+    <!--开放对上传功能的支持-->
+    <!--此处需要commons-fileupload的maven依赖-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+    <!--拦截器-->
+    <!--修改springmvc-servlet.xml以对/index路径进行拦截-->
+    <!--如果要拦截其他路径：-->
+    <!--    /** 拦截所有-->
+    <!--    /category/** 拦截/category路径下的所有-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/index"/>
+            <!--定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的-->
+            <bean class="com.ckh.interceptor.IndexInterceptor"/>
+        </mvc:interceptor>
+        <!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法 -->
+    </mvc:interceptors>
+
+</beans>
