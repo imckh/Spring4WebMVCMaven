@@ -29,12 +29,12 @@ spring-framework-4.3.7.RELEASE
 web.xml
 ```xml
     <servlet>
-        <servlet-name>chapter2</servlet-name>
+        <servlet-name>spring</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>chapter2</servlet-name>
+        <servlet-name>spring</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
 ```
